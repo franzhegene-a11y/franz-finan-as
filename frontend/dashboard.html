@@ -56,5 +56,15 @@
   }
 </script>
 
+<script>
+  const lucro = localStorage.getItem('lucroDia') || '0.00';
+  const boletos = JSON.parse(localStorage.getItem('boletos')) || [];
+
+  document.querySelector('.card.green strong').innerText = `R$ ${lucro}`;
+  document.querySelector('.card.red strong').innerText =
+    boletos.length ? `${boletos.length} pendente(s)` : 'Nenhum';
+</script>
+
+  
 </body>
 </html>
