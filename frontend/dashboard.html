@@ -8,78 +8,59 @@
 <body>
 
 <script>
-  // Proteção de login
   if (localStorage.getItem('logado') !== 'sim') {
     window.location.href = 'index.html';
   }
 </script>
 
 <div class="app">
-  <header>
-    <h1>Dashboard</h1>
-  </header>
+  <h1>Dashboard</h1>
 
-  <main>
+  <div class="card green">
+    <span>Lucro do Dia</span>
+    <strong id="lucro">R$ 0,00</strong>
+  </div>
 
-    <!-- LUCRO DO DIA -->
-    <div class="card green">
-      <span>Lucro do Dia</span>
-      <strong id="lucro">R$ 0,00</strong>
-    </div>
+  <div class="card red">
+    <span>Boletos Pendentes</span>
+    <strong id="boletos">Nenhum</strong>
+  </div>
 
-    <!-- BOLETOS -->
-    <div class="card red">
-      <span>Boletos Pendentes</span>
-      <strong id="boletos">Nenhum</strong>
-    </div>
+  <button class="primary" onclick="location.href='add.html'">
+    Lançar Dia
+  </button>
 
-    <!-- BOTÕES -->
-    <button class="primary" onclick="location.href='add.html'">
-      Lançar Dia
-    </button>
+  <button class="primary" onclick="location.href='boletos.html'">
+    Cadastrar Boletos
+  </button>
 
-    <button class="primary" onclick="location.href='boletos.html'">
-      Cadastrar Boletos
-    </button>
+  <button class="secondary" onclick="fecharCaixa()">
+    Fechar Caixa
+  </button>
 
-    <button class="secondary" onclick="location.href='fechar-caixa.html'">
-      Fechar Caixa
-    </button>
-
-    <button class="secondary" onclick="logout()">
-      Sair
-    </button>
-
-  </main>
+  <button class="secondary" onclick="sair()">
+    Sair
+  </button>
 </div>
 
 <script>
-  function logout() {
+  function sair() {
     localStorage.removeItem('logado');
     window.location.href = 'index.html';
   }
 
-  // BUSCAR LUCRO DO DIA (API REAL)
+  function fecharCaixa() {
+    alert('Fechamento mensal será implementado');
+  }
+
   fetch('/lucro-dia')
     .then(res => res.json())
     .then(data => {
-      const total = Number(data.total) || 0;
       document.getElementById('lucro').innerText =
-        `R$ ${total.toFixed(2)}`;
+        `R$ ${Number(data.total).toFixed(2)}`;
     })
     .catch(() => {
       document.getElementById('lucro').innerText = 'R$ 0,00';
-    });
-
-  // BUSCAR BOLETOS PENDENTES (placeholder por enquanto)
-  fetch('/boletos-pendentes')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('boletos').innerText =
-        data.total > 0 ? `${data.total} pendente(s)` : 'Nenhum';
-    })
-    .catch(() => {
-      document.getElementById('boletos').innerText = 'Nenhum';
     });
 </script>
 
