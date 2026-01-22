@@ -11,6 +11,36 @@
     window.location.href = 'index.html';
   }
 </script>
+
+<div class="container">
+  <h1>Dashboard</h1>
+
+  <div class="card green">
+    <p>Lucro do Dia</p>
+    <strong>R$ 0,00</strong>
+  </div>
+
+  <div class="card red">
+    <p>Boletos Pendentes</p>
+    <strong>Nenhum</strong>
+  </div>
+
+  <a href="add.html">
+    <button>Lançar Dia</button>
+  </a>
+
+  <br><br>
+
+  <button onclick="logout()">Sair</button>
+</div>
+
+<script>
+  function logout() {
+    localStorage.removeItem('logado');
+    window.location.href = 'index.html';
+  }
+</script>
+
   
   <div class="container">
     <h1>Dashboard</h1>
