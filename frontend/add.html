@@ -8,10 +8,27 @@
 <body>
 
 <script>
-  if (localStorage.getItem('logado') !== 'sim') {
-    window.location.href = 'index.html';
+  function salvarDia() {
+    const valor = document.getElementById('valor').value;
+    if (!valor) return alert('Informe o valor');
+
+    fetch('/lancar-dia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ valor })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(() => {
+        alert('Lançamento salvo!');
+        window.location.href = 'dashboard.html';
+      })
+      .catch(() => alert('Erro ao salvar'));
   }
 </script>
+
 
 <div class="app">
   <header>
