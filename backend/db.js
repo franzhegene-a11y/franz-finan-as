@@ -1,22 +1,14 @@
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
-  database: 'railway',   // 👈 FORÇADO
+  database: process.env.MYSQLDATABASE || 'railway',
   port: process.env.MYSQLPORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  waitForConnections: true,
+  connectionLimit: 5,
+  queueLimit: 0
 });
 
-connection.connect(err => {
-  if (err) {
-    console.error('❌ ERRO MYSQL:', err);
-  } else {
-    console.log('✅ CONECTADO AO DATABASE railway');
-  }
-});
-
-module.exports = connection;
+module.exports = db;
