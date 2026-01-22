@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Fechar Caixa | Franz Finance</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<script>
+  if (localStorage.getItem('logado') !== 'sim') {
+    window.location.href = 'index.html';
+  }
+</script>
+
+<div class="app">
+  <header>
+    <h1>Fechar Caixa</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <p>Resumo do Mês</p>
+      <strong>Lucro Total: R$ 0,00</strong>
+    </div>
+
+    <button class="primary" onclick="fecharCaixa()">
+      Confirmar Fechamento
+    </button>
+
+    <button class="secondary" onclick="location.href='dashboard.html'">
+      Voltar
+    </button>
+  </main>
+</div>
+
+<script>
+  function fecharCaixa() {
+    alert('Caixa fechado com sucesso!');
+  }
+</script>
+
+</body>
+</html>
