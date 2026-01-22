@@ -20,11 +20,11 @@
 
   <main>
     <div class="card">
-      <input placeholder="Descrição do boleto">
-      <input type="number" placeholder="Valor (R$)">
-      <input type="date">
+      <input id="desc" placeholder="Descrição">
+      <input id="valor" type="number" placeholder="Valor (R$)">
+      <input id="data" type="date">
 
-      <button class="primary">Salvar Boleto</button>
+      <button class="primary" onclick="salvarBoleto()">Salvar Boleto</button>
     </div>
 
     <button class="secondary" onclick="location.href='dashboard.html'">
@@ -32,6 +32,22 @@
     </button>
   </main>
 </div>
+
+<script>
+  function salvarBoleto() {
+    const boletos = JSON.parse(localStorage.getItem('boletos')) || [];
+
+    boletos.push({
+      desc: document.getElementById('desc').value,
+      valor: document.getElementById('valor').value,
+      data: document.getElementById('data').value
+    });
+
+    localStorage.setItem('boletos', JSON.stringify(boletos));
+    alert('Boleto salvo!');
+    window.location.href = 'dashboard.html';
+  }
+</script>
 
 </body>
 </html>
