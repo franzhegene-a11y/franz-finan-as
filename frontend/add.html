@@ -8,52 +8,61 @@
 <body>
 
 <script>
-  function salvarDia() {
-    const valor = document.getElementById('valor').value;
-    if (!valor) return alert('Informe o valor');
-
-    fetch('/lancar-dia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ valor })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(() => {
-        alert('Lançamento salvo!');
-        window.location.href = 'dashboard.html';
-      })
-      .catch(() => alert('Erro ao salvar'));
+  if (localStorage.getItem('logado') !== 'sim') {
+    window.location.href = 'index.html';
   }
 </script>
 
-
 <div class="app">
-  <header>
-    <h1>Lançar Dia</h1>
-  </header>
+  <h1>Lançar Dia</h1>
 
-  <main>
-    <div class="card">
-      <input id="valor" type="number" placeholder="Lucro do dia (R$)">
-      <button class="primary" onclick="salvarDia()">Salvar</button>
-    </div>
+  <input
+    type="number"
+    id="valor"
+    placeholder="Valor do dia"
+    step="0.01"
+  />
 
-    <button class="secondary" onclick="location.href='dashboard.html'">
-      Voltar
-    </button>
-  </main>
+  <button class="primary" onclick="salvar()">
+    Salvar
+  </button>
+
+  <button class="secondary" onclick="voltar()">
+    Voltar
+  </button>
 </div>
 
 <script>
-  function salvarDia() {
-    const valor = document.getElementById('valor').value;
-    if (!valor) return alert('Informe o valor');
+  function salvar() {
+    const valor = Number(document.getElementById('valor').value);
 
-    localStorage.setItem('lucroDia', valor);
-    alert('Dia salvo com sucesso!');
+    if (!valor || valor <= 0) {
+      alert('Informe um valor válido');
+      return;
+    }
+
+    fetch('/lancar-dia', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ valor })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert('Dia lançado com sucesso!');
+        window.location.href = 'dashboard.html';
+      } else {
+        alert('Erro ao salvar');
+      }
+    })
+    .catch(() => {
+      alert('Erro de conexão');
+    });
+  }
+
+  function voltar() {
     window.location.href = 'dashboard.html';
   }
 </script>
