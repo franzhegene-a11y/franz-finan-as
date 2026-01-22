@@ -1,17 +1,15 @@
 {
-  "name": "franz-finance",
+  "name": "franz-finan-as",
   "version": "1.0.0",
-  "description": "Sistema de gestão financeira para restaurante",
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "mysql2": "^3.6.5",
-    "bcrypt": "^5.1.0"
+    "mysql2": "^3.9.7"
   },
   "engines": {
-    "node": ">=18"
+    "node": "18.x"
   }
 }
