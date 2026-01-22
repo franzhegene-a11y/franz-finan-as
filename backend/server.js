@@ -3,16 +3,18 @@ const path = require('path');
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Caminho absoluto correto do frontend
+const frontendPath = path.join(__dirname, '..', 'frontend');
 
-// Rota principal
+// Servir arquivos estáticos
+app.use(express.static(frontendPath));
+
+// Rota raiz
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Porta dinâmica (Railway)
+// Porta dinâmica Railway
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
