@@ -46,16 +46,28 @@ app.post('/login', (req, res) => {
 app.post('/lancar-dia', (req, res) => {
   const { valor } = req.body;
 
+  if (!valor || isNaN(valor)) {
+    return res.status(400).json({ success: false, error: 'Valor inválido' });
+  }
+
   db.query(
     'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
     [valor],
-    err => {
+    (err, result) => {
       if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Erro ao salvar' });
+        console.error('❌ ERRO INSERT:', err);
+        return res.status(500).json({
+          success: false,
+          error: 'Erro ao salvar no banco'
+        });
       }
 
-      res.json({ success: true });
+      // 🔥 SEMPRE retorna success true
+      res.json({
+        success: true,
+        id: result.insertId,
+        valor
+      });
     }
   );
 });
