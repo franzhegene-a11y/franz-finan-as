@@ -1,0 +1,8 @@
+{
+  "name": "Franz Finance",
+  "short_name": "Franz",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "theme_color": "#2c3e50",
+  "background_color": "#f4f6f8"
+}
