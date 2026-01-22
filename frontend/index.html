@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login | Restaurante Franz</title>
+  <title>Login | Franz Finance</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Restaurante Franz</h1>
+
     <div class="card">
-      <input placeholder="Usuário">
-      <input type="password" placeholder="Senha">
-      <button>Entrar</button>
+      <input id="user" placeholder="Usuário">
+      <input id="pass" type="password" placeholder="Senha">
+      <button onclick="login()">Entrar</button>
+      <p id="erro" style="color:red;"></p>
     </div>
   </div>
-</body>
-</html>
+
+  <script>
+    function l
