@@ -1,21 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <title>Lançar Dia</title>
+  <meta charset="UTF-8">
+  <title>Lançar Dia | Franz Finance</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+
+<script>
+  if (localStorage.getItem('logado') !== 'sim') {
+    window.location.href = 'index.html';
+  }
+</script>
+
+<div class="app">
+  <header>
     <h1>Lançar Dia</h1>
+  </header>
 
-    <input placeholder="Buffet">
-    <input placeholder="Marmita Pequena">
-    <input placeholder="Marmita Média">
-    <input placeholder="Marmita Grande">
-    <input placeholder="Empresa">
-    <input placeholder="Gasto do Dia">
+  <main>
+    <div class="card">
+      <input id="valor" type="number" placeholder="Lucro do dia (R$)">
+      <button class="primary" onclick="salvarDia()">Salvar</button>
+    </div>
 
-    <button>Salvar</button>
-  </div>
+    <button class="secondary" onclick="location.href='dashboard.html'">
+      Voltar
+    </button>
+  </main>
+</div>
+
+<script>
+  function salvarDia() {
+    const valor = document.getElementById('valor').value;
+    if (!valor) return alert('Informe o valor');
+
+    localStorage.setItem('lucroDia', valor);
+    alert('Dia salvo com sucesso!');
+    window.location.href = 'dashboard.html';
+  }
+</script>
+
 </body>
 </html>
