@@ -1,37 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <title>Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Dashboard | Franz Finance</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
- <script>
+
+<script>
   if (localStorage.getItem('logado') !== 'sim') {
     window.location.href = 'index.html';
   }
 </script>
 
-<div class="container">
-  <h1>Dashboard</h1>
+<div class="app">
+  <header>
+    <h1>Dashboard</h1>
+  </header>
 
-  <div class="card green">
-    <p>Lucro do Dia</p>
-    <strong>R$ 0,00</strong>
-  </div>
+  <main>
+    <div class="card green">
+      <span>Lucro do Dia</span>
+      <strong>R$ 0,00</strong>
+    </div>
 
-  <div class="card red">
-    <p>Boletos Pendentes</p>
-    <strong>Nenhum</strong>
-  </div>
+    <div class="card red">
+      <span>Boletos Pendentes</span>
+      <strong>Nenhum</strong>
+    </div>
 
-  <a href="add.html">
-    <button>Lançar Dia</button>
-  </a>
+    <button class="primary" onclick="location.href='add.html'">
+      Lançar Dia
+    </button>
 
-  <br><br>
-
-  <button onclick="logout()">Sair</button>
+    <button class="secondary" onclick="logout()">
+      Sair
+    </button>
+  </main>
 </div>
 
 <script>
@@ -40,7 +45,6 @@
     window.location.href = 'index.html';
   }
 </script>
-</div>
-  
+
 </body>
 </html>
