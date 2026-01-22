@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
+  database: 'railway',   // 👈 FORÇADO
   port: process.env.MYSQLPORT,
   ssl: {
     rejectUnauthorized: false
@@ -13,9 +13,9 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
   if (err) {
-    console.error('❌ Erro ao conectar no MySQL:', err);
+    console.error('❌ ERRO MYSQL:', err);
   } else {
-    console.log('✅ MySQL conectado com sucesso');
+    console.log('✅ CONECTADO AO DATABASE railway');
   }
 });
 
