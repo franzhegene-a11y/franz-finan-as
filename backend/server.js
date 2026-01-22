@@ -38,13 +38,15 @@ app.post('/login', (req, res) => {
 // Salvar lançamento do dia
 app.post('/lancar-dia', (req, res) => {
   const { valor } = req.body;
-  const data = new Date().toISOString().slice(0, 10);
 
   db.query(
-    'INSERT INTO lancamentos (data, valor) VALUES (?, ?)',
-    [data, valor],
+    'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
+    [valor],
     err => {
-      if (err) return res.status(500).json({ error: 'Erro ao salvar lançamento' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Erro ao salvar lançamento' });
+      }
       res.json({ success: true });
     }
   );
