@@ -18,35 +18,35 @@
     <h1>Dashboard</h1>
   </header>
 
-<main>
-  <div class="card green">
-    <span>Lucro do Dia</span>
-    <strong>R$ 0,00</strong>
-  </div>
+  <main>
 
-  <div class="card red">
-    <span>Boletos Pendentes</span>
-    <strong>Nenhum</strong>
-  </div>
+    <div class="card green">
+      <span>Lucro do Dia</span>
+      <strong>R$ 0,00</strong>
+    </div>
 
-  <button class="primary" onclick="location.href='add.html'">
-    Lançar Dia
-  </button>
+    <div class="card red">
+      <span>Boletos Pendentes</span>
+      <strong>Nenhum</strong>
+    </div>
 
-  <button class="primary" onclick="location.href='boletos.html'">
-    Cadastrar Boletos
-  </button>
+    <button class="primary" onclick="location.href='add.html'">
+      Lançar Dia
+    </button>
 
-  <button class="secondary" onclick="location.href='fechar-caixa.html'">
-    Fechar Caixa
-  </button>
+    <button class="primary" onclick="location.href='boletos.html'">
+      Cadastrar Boletos
+    </button>
 
-  <button class="secondary" onclick="logout()">
-    Sair
-  </button>
-</main>
+    <button class="secondary" onclick="location.href='fechar-caixa.html'">
+      Fechar Caixa
+    </button>
 
-  
+    <button class="secondary" onclick="logout()">
+      Sair
+    </button>
+
+  </main>
 </div>
 
 <script>
@@ -54,26 +54,33 @@
     localStorage.removeItem('logado');
     window.location.href = 'index.html';
   }
-</script>
 
-<script>
-  const lucro = localStorage.getItem('lucroDia') || '0.00';
-  const boletos = JSON.parse(localStorage.getItem('boletos')) || [];
-
-  document.querySelector('.card.green strong').innerText = `R$ ${lucro}`;
-  document.querySelector('.card.red strong').innerText =
-    boletos.length ? `${boletos.length} pendente(s)` : 'Nenhum';
-</script>
-
-<script>
+  // Buscar lucro do dia
   fetch('/lucro-dia')
     .then(res => res.json())
     .then(data => {
+      const total = data.total ? Number(data.total) : 0;
       document.querySelector('.card.green strong').innerText =
-        `R$ ${Number(data.total).toFixed(2)}`;
+        `R$ ${total.toFixed(2)}`;
+    })
+    .catch(() => {
+      document.querySelector('.card.green strong').innerText = 'R$ 0,00';
+    });
+
+  // Buscar boletos pendentes
+  fetch('/boletos-pendentes')
+    .then(res => res.json())
+    .then(data => {
+      const texto = data.total > 0
+        ? `${data.total} pendente(s)`
+        : 'Nenhum';
+
+      document.querySelector('.card.red strong').innerText = texto;
+    })
+    .catch(() => {
+      document.querySelector('.card.red strong').innerText = 'Nenhum';
     });
 </script>
 
-  
 </body>
 </html>
