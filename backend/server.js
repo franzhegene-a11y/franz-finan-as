@@ -1,3 +1,7 @@
+const bcrypt = require('bcrypt');
+const db = require('./db');
+
+
 const express = require('express');
 const path = require('path');
 
