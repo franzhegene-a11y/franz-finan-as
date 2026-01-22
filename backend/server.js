@@ -5,22 +5,15 @@ const db = require('./db');
 
 const app = express();
 
-/* =======================
-   CONFIGURAÇÕES
-======================= */
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-/* =======================
-   ROTAS DE PÁGINAS
-======================= */
+/* ========= PÁGINA INICIAL ========= */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-/* =======================
-   LOGIN
-======================= */
+/* ========= LOGIN ========= */
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -38,9 +31,9 @@ app.post('/login', (req, res) => {
       }
 
       const user = results[0];
-      const valido = await bcrypt.compare(password, user.password);
+      const ok = await bcrypt.compare(password, user.password);
 
-      if (!valido) {
+      if (!ok) {
         return res.status(401).json({ error: 'Senha incorreta' });
       }
 
@@ -49,23 +42,17 @@ app.post('/login', (req, res) => {
   );
 });
 
-/* =======================
-   LANÇAR DIA
-======================= */
+/* ========= LANÇAR DIA ========= */
 app.post('/lancar-dia', (req, res) => {
   const { valor } = req.body;
-
-  if (!valor) {
-    return res.status(400).json({ error: 'Valor inválido' });
-  }
 
   db.query(
     'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
     [valor],
     err => {
       if (err) {
-        console.error('Erro ao salvar lançamento:', err);
-        return res.status(500).json({ error: 'Erro ao salvar lançamento' });
+        console.error(err);
+        return res.status(500).json({ error: 'Erro ao salvar' });
       }
 
       res.json({ success: true });
@@ -73,15 +60,13 @@ app.post('/lancar-dia', (req, res) => {
   );
 });
 
-/* =======================
-   LUCRO DO DIA
-======================= */
+/* ========= LUCRO DO DIA ========= */
 app.get('/lucro-dia', (req, res) => {
   db.query(
     'SELECT IFNULL(SUM(valor),0) AS total FROM lancamentos WHERE data = CURDATE()',
     (err, results) => {
       if (err) {
-        console.error('Erro ao buscar lucro:', err);
+        console.error('❌ QUERY ERRO:', err);
         return res.status(500).json({ error: 'Erro ao buscar lucro' });
       }
 
@@ -90,27 +75,8 @@ app.get('/lucro-dia', (req, res) => {
   );
 });
 
-/* =======================
-   BOLETOS PENDENTES
-======================= */
-app.get('/boletos-pendentes', (req, res) => {
-  db.query(
-    'SELECT COUNT(*) AS total FROM boletos WHERE pago = false',
-    (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Erro ao buscar boletos' });
-      }
-
-      res.json({ total: results[0].total });
-    }
-  );
-});
-
-/* =======================
-   START SERVER
-======================= */
+/* ========= START ========= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Sistema Franz rodando na porta ${PORT}`);
+  console.log(`🚀 Franz Finance ONLINE na porta ${PORT}`);
 });
