@@ -36,9 +36,13 @@
 
 <script>
   function fecharCaixa() {
-    alert('Caixa fechado com sucesso!');
+    localStorage.removeItem('lucroDia');
+    localStorage.removeItem('boletos');
+    alert('Caixa fechado e dados zerados!');
+    window.location.href = 'dashboard.html';
   }
 </script>
+
 
 </body>
 </html>
