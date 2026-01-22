@@ -65,6 +65,15 @@
     boletos.length ? `${boletos.length} pendente(s)` : 'Nenhum';
 </script>
 
+<script>
+  fetch('/lucro-dia')
+    .then(res => res.json())
+    .then(data => {
+      document.querySelector('.card.green strong').innerText =
+        `R$ ${Number(data.total).toFixed(2)}`;
+    });
+</script>
+
   
 </body>
 </html>
