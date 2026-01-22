@@ -8,6 +8,7 @@
 <body>
 
 <script>
+  // Proteção de login
   if (localStorage.getItem('logado') !== 'sim') {
     window.location.href = 'index.html';
   }
@@ -20,16 +21,19 @@
 
   <main>
 
+    <!-- LUCRO DO DIA -->
     <div class="card green">
       <span>Lucro do Dia</span>
-      <strong>R$ 0,00</strong>
+      <strong id="lucro">R$ 0,00</strong>
     </div>
 
+    <!-- BOLETOS -->
     <div class="card red">
       <span>Boletos Pendentes</span>
-      <strong>Nenhum</strong>
+      <strong id="boletos">Nenhum</strong>
     </div>
 
+    <!-- BOTÕES -->
     <button class="primary" onclick="location.href='add.html'">
       Lançar Dia
     </button>
@@ -55,30 +59,27 @@
     window.location.href = 'index.html';
   }
 
-  // Buscar lucro do dia
+  // BUSCAR LUCRO DO DIA (API REAL)
   fetch('/lucro-dia')
     .then(res => res.json())
     .then(data => {
-      const total = data.total ? Number(data.total) : 0;
-      document.querySelector('.card.green strong').innerText =
+      const total = Number(data.total) || 0;
+      document.getElementById('lucro').innerText =
         `R$ ${total.toFixed(2)}`;
     })
     .catch(() => {
-      document.querySelector('.card.green strong').innerText = 'R$ 0,00';
+      document.getElementById('lucro').innerText = 'R$ 0,00';
     });
 
-  // Buscar boletos pendentes
+  // BUSCAR BOLETOS PENDENTES (placeholder por enquanto)
   fetch('/boletos-pendentes')
     .then(res => res.json())
     .then(data => {
-      const texto = data.total > 0
-        ? `${data.total} pendente(s)`
-        : 'Nenhum';
-
-      document.querySelector('.card.red strong').innerText = texto;
+      document.getElementById('boletos').innerText =
+        data.total > 0 ? `${data.total} pendente(s)` : 'Nenhum';
     })
     .catch(() => {
-      document.querySelector('.card.red strong').innerText = 'Nenhum';
+      document.getElementById('boletos').innerText = 'Nenhum';
     });
 </script>
 
