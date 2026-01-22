@@ -54,13 +54,13 @@ app.post('/lancar-dia', (req, res) => {
 
 // Buscar lucro do dia
 app.get('/lucro-dia', (req, res) => {
-  const data = new Date().toISOString().slice(0, 10);
-
   db.query(
-    'SELECT SUM(valor) AS total FROM lancamentos WHERE data = ?',
-    [data],
+    'SELECT SUM(valor) AS total FROM lancamentos WHERE data = CURDATE()',
     (err, results) => {
-      if (err) return res.status(500).json({ error: 'Erro ao buscar lucro' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Erro ao buscar lucro' });
+      }
       res.json({ total: results[0].total || 0 });
     }
   );
