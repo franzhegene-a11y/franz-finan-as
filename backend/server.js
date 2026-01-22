@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const db = require('./db');
 
 const app = express();
@@ -8,102 +7,51 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-/* ========= PÁGINA INICIAL ========= */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-/* ========= LOGIN ========= */
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
+/* ===== TESTE VIDA ===== */
+app.get('/ping', (req, res) => {
+  res.json({ ok: true });
+});
+
+/* ===== LUCRO DO DIA ===== */
+app.get('/lucro-dia', (req, res) => {
+  db.query(
+    'SELECT IFNULL(SUM(valor),0) AS total FROM lancamentos WHERE data = CURDATE()',
+    (err, rows) => {
+      if (err) {
+        console.error('ERRO lucro-dia:', err);
+        return res.status(500).json({ error: 'erro banco' });
+      }
+      res.json({ total: rows[0].total });
+    }
+  );
+});
+
+/* ===== LANÇAR DIA ===== */
+app.post('/lancar-dia', (req, res) => {
+  const valor = Number(req.body.valor);
+
+  if (!valor || valor <= 0) {
+    return res.status(400).json({ error: 'valor invalido' });
+  }
 
   db.query(
-    'SELECT * FROM users WHERE username = ?',
-    [username],
-    async (err, results) => {
+    'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
+    [valor],
+    (err, result) => {
       if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Erro no servidor' });
+        console.error('ERRO INSERT:', err);
+        return res.status(500).json({ error: 'erro insert' });
       }
-
-      if (results.length === 0) {
-        return res.status(401).json({ error: 'Usuário não encontrado' });
-      }
-
-      const user = results[0];
-      const ok = await bcrypt.compare(password, user.password);
-
-      if (!ok) {
-        return res.status(401).json({ error: 'Senha incorreta' });
-      }
-
       res.json({ success: true });
     }
   );
 });
 
-/* ========= LANÇAR DIA ========= */
-app.post('/lancar-dia', (req, res) => {
-  let { valor } = req.body;
-
-  valor = Number(valor);
-
-  if (!valor || isNaN(valor)) {
-    return res.status(400).json({
-      success: false,
-      error: 'Valor inválido'
-    });
-  }
-
-  const sql = `
-    INSERT INTO lancamentos (data, valor)
-    VALUES (DATE(NOW()), ?)
-  `;
-
-  db.query(sql, [valor], (err, result) => {
-    if (err) {
-      console.error('❌ ERRO MYSQL INSERT:', err);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao salvar no banco'
-      });
-    }
-
-    res.json({
-      success: true,
-      id: result.insertId,
-      valor
-    });
-  });
-});
-
-      // 🔥 SEMPRE retorna success true
-      res.json({
-        success: true,
-        id: result.insertId,
-        valor
-      });
-    }
-  );
-});
-
-/* ========= LUCRO DO DIA ========= */
-app.get('/lucro-dia', (req, res) => {
-  db.query(
-    'SELECT IFNULL(SUM(valor),0) AS total FROM lancamentos WHERE data = CURDATE()',
-    (err, results) => {
-      if (err) {
-        console.error('❌ QUERY ERRO:', err);
-        return res.status(500).json({ error: 'Erro ao buscar lucro' });
-      }
-
-      res.json({ total: results[0].total });
-    }
-  );
-});
-
-/* ========= START ========= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Franz Finance ONLINE na porta ${PORT}`);
+  console.log('🚀 Franz Finance rodando na porta', PORT);
 });
