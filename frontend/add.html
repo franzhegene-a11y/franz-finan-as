@@ -33,37 +33,43 @@
 </div>
 
 <script>
-  function salvar() {
-    const valor = Number(document.getElementById('valor').value);
+async function salvar() {
+  const valorInput = document.getElementById('valor').value;
+  const valor = Number(valorInput);
 
-    if (!valor || valor <= 0) {
-      alert('Informe um valor válido');
+  if (!valorInput || isNaN(valor) || valor <= 0) {
+    alert('Digite um valor válido');
+    return;
+  }
+
+  try {
+    const response = await fetch('/lancar-dia', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ valor })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.erro || 'Erro desconhecido do servidor');
       return;
     }
 
-    fetch('/lancar-dia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ valor })
-    })
-    .then(async res => {
-      const data = await res.json();
+    alert('Lançamento salvo com sucesso!');
+    window.location.href = '/dashboard.html';
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro desconhecido');
-      }
-
-      alert(`Dia lançado: R$ ${valor.toFixed(2)}`);
-      window.location.href = 'dashboard.html';
-    })
-    .catch(err => {
-      alert('Erro real: ' + err.message);
-    });
+  } catch (err) {
+    console.error(err);
+    alert('Erro de conexão com o servidor');
   }
+}
 
-  function voltar() {
-    window.location.href = 'dashboard.html';
-  }
+function voltar() {
+  window.location.href = '/dashboard.html';
+}
 </script>
 
 </body>
