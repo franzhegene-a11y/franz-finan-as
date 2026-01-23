@@ -1,12 +1,12 @@
-const express = require('express');
-const mysql = require('mysql2');
-const path = require('path');
+const express = require("express");
+const mysql = require("mysql2");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../frontend")));
 
-// ===== CONEXÃO MYSQL =====
-const db = mysql.createPool({
+const db = mysql.createConnection({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
@@ -14,56 +14,59 @@ const db = mysql.createPool({
   port: process.env.MYSQLPORT
 });
 
-// ===== FRONTEND =====
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+db.connect(err => {
+  if (err) {
+    console.error("Erro ao conectar no banco:", err);
+  } else {
+    console.log("Banco conectado");
+  }
 });
 
-// ===== LANÇAR DIA =====
-app.post('/lancar-dia', (req, res) => {
+/* ===============================
+   SALVAR / ATUALIZAR LUCRO DO DIA
+================================ */
+app.post("/lancar-dia", (req, res) => {
   const { valor } = req.body;
 
-  if (typeof valor !== 'number') {
-    return res.status(400).json({ erro: 'Valor inválido' });
+  if (!valor || isNaN(valor)) {
+    return res.status(400).json({ error: "Valor inválido" });
   }
 
   const sql = `
     INSERT INTO lancamentos (data, valor)
     VALUES (CURDATE(), ?)
+    ON DUPLICATE KEY UPDATE valor = ?
   `;
 
-  db.query(sql, [valor], (err) => {
+  db.query(sql, [valor, valor], (err) => {
     if (err) {
-      console.error('ERRO MYSQL:', err);
-      return res.status(500).json({ erro: 'Erro ao salvar no banco' });
+      console.error("Erro no banco:", err);
+      return res.status(500).json({ error: "Erro ao salvar no banco" });
     }
 
-    res.json({ ok: true });
+    res.json({ success: true });
   });
 });
 
-// ===== LUCRO DO DIA =====
-app.get('/lucro-dia', (req, res) => {
+/* ===============================
+   BUSCAR LUCRO DO DIA
+================================ */
+app.get("/lucro-dia", (req, res) => {
   const sql = `
     SELECT IFNULL(SUM(valor), 0) AS total
     FROM lancamentos
     WHERE data = CURDATE()
   `;
 
-  db.query(sql, (err, results) => {
+  db.query(sql, (err, result) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ erro: 'Erro ao buscar lucro' });
+      return res.status(500).json({ error: "Erro ao buscar lucro" });
     }
 
-    res.json({ total: Number(results[0].total) });
+    res.json({ total: result[0].total });
   });
 });
 
-// ===== START =====
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log('Sistema Franz rodando na porta', PORT);
+app.listen(8080, () => {
+  console.log("Sistema Franz rodando na porta 8080");
 });
