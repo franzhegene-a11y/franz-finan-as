@@ -3,11 +3,10 @@ const mysql = require('mysql2');
 const path = require('path');
 
 const app = express();
-
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
 
-const db = mysql.createConnection({
+// ===== CONEXÃO MYSQL =====
+const db = mysql.createPool({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
@@ -15,64 +14,56 @@ const db = mysql.createConnection({
   port: process.env.MYSQLPORT
 });
 
-db.connect(err => {
-  if (err) {
-    console.error('Erro ao conectar no banco:', err);
-    return;
-  }
-  console.log('Banco conectado');
+// ===== FRONTEND =====
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-/* ==========================
-   INSERIR LANÇAMENTO DO DIA
-========================== */
-app.post('/lancar-dia', async (req, res) => {
+// ===== LANÇAR DIA =====
+app.post('/lancar-dia', (req, res) => {
   const { valor } = req.body;
 
   if (typeof valor !== 'number') {
     return res.status(400).json({ erro: 'Valor inválido' });
   }
 
-  try {
-    await db.query(
-      'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
-      [valor]
-    );
+  const sql = `
+    INSERT INTO lancamentos (data, valor)
+    VALUES (CURDATE(), ?)
+  `;
+
+  db.query(sql, [valor], (err) => {
+    if (err) {
+      console.error('ERRO MYSQL:', err);
+      return res.status(500).json({ erro: 'Erro ao salvar no banco' });
+    }
 
     res.json({ ok: true });
-  } catch (err) {
-    console.error('Erro insert:', err);
-    res.status(500).json({ erro: 'Erro ao salvar no banco' });
-  }
+  });
 });
 
-/* ==========================
-   BUSCAR LUCRO DO DIA
-========================== */
+// ===== LUCRO DO DIA =====
 app.get('/lucro-dia', (req, res) => {
   const sql = `
-    SELECT SUM(valor) AS total
+    SELECT IFNULL(SUM(valor), 0) AS total
     FROM lancamentos
     WHERE data = CURDATE()
   `;
 
-  db.query(sql, (err, rows) => {
+  db.query(sql, (err, results) => {
     if (err) {
-      console.error('Erro select:', err);
+      console.error(err);
       return res.status(500).json({ erro: 'Erro ao buscar lucro' });
     }
 
-    res.json({ total: rows[0].total || 0 });
+    res.json({ total: Number(results[0].total) });
   });
 });
 
-/* ==========================
-   ROTAS HTML
-========================== */
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Servidor rodando');
+// ===== START =====
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log('Sistema Franz rodando na porta', PORT);
 });
