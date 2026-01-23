@@ -43,13 +43,11 @@ async function salvar() {
   }
 
   try {
-    const response = await fetch('/lancar-dia', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ valor })
-    });
+    const response = await await fetch("/lancar-dia", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ valor: Number(valor) })
+});
 
     const data = await response.json();
 
