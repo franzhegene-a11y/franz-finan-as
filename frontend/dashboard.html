@@ -26,15 +26,15 @@
     <strong id="boletos">Nenhum</strong>
   </div>
 
-  <button class="primary" onclick="location.href='add.html'">
+  <button class="primary" onclick="irLancamento()">
     Lançar Dia
   </button>
 
-  <button class="primary" onclick="location.href='boletos.html'">
+  <button class="primary" onclick="alert('Em breve')">
     Cadastrar Boletos
   </button>
 
-  <button class="secondary" onclick="fecharCaixa()">
+  <button class="secondary" onclick="alert('Em breve')">
     Fechar Caixa
   </button>
 
@@ -49,15 +49,21 @@
     window.location.href = 'index.html';
   }
 
-  function fecharCaixa() {
-    alert('Fechamento mensal será implementado');
+  function irLancamento() {
+    window.location.href = 'add.html';
   }
 
   fetch('/lucro-dia')
     .then(res => res.json())
     .then(data => {
+      let total = Number(data.total);
+
+      if (isNaN(total)) {
+        total = 0;
+      }
+
       document.getElementById('lucro').innerText =
-        `R$ ${Number(data.total).toFixed(2)}`;
+        `R$ ${total.toFixed(2)}`;
     })
     .catch(() => {
       document.getElementById('lucro').innerText = 'R$ 0,00';
