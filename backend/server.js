@@ -39,17 +39,16 @@ app.post('/lancar-dia', (req, res) => {
   }
 
   db.query(
-    'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
-    [valor],
-    (err, result) => {
-      if (err) {
-        console.error('ERRO INSERT:', err);
-        return res.status(500).json({ error: 'erro insert' });
-      }
-      res.json({ success: true });
+  'INSERT INTO lancamentos (`data`, valor) VALUES (CURDATE(), ?)',
+  [valor],
+  (err, result) => {
+    if (err) {
+      console.error('ERRO INSERT MYSQL:', err);
+      return res.status(500).json({ error: 'erro insert' });
     }
-  );
-});
+    res.json({ success: true });
+  }
+);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
