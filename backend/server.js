@@ -26,26 +26,24 @@ db.connect(err => {
 /* ==========================
    INSERIR LANÇAMENTO DO DIA
 ========================== */
-app.post('/lancar-dia', (req, res) => {
+app.post('/lancar-dia', async (req, res) => {
   const { valor } = req.body;
 
-  if (!valor || isNaN(valor)) {
+  if (typeof valor !== 'number') {
     return res.status(400).json({ erro: 'Valor inválido' });
   }
 
-  const sql = `
-    INSERT INTO lancamentos (data, valor)
-    VALUES (CURDATE(), ?)
-  `;
+  try {
+    await db.query(
+      'INSERT INTO lancamentos (data, valor) VALUES (CURDATE(), ?)',
+      [valor]
+    );
 
-  db.query(sql, [Number(valor)], (err) => {
-    if (err) {
-      console.error('Erro insert:', err);
-      return res.status(500).json({ erro: 'Erro ao inserir no banco' });
-    }
-
-    res.json({ sucesso: true });
-  });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Erro insert:', err);
+    res.status(500).json({ erro: 'Erro ao salvar no banco' });
+  }
 });
 
 /* ==========================
